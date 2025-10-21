@@ -21,6 +21,7 @@ public class UserService {
 
     public void createUser(UserDto userDto) {
         UserEntity entity = userMapper.mapToEntity(userDto);
+        log.info("this is my user dto {}", userDto );
         entity = userRepo.save(entity);
 //        userDto = userMapper.mapToDto(entity);
     }
