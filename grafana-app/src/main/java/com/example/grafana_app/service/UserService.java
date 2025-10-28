@@ -7,6 +7,7 @@ import com.example.grafana_app.reposetory.UserRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,5 +31,8 @@ public class UserService {
         UserEntity userEntity = userRepo.findById(id).orElseThrow(()-> new RuntimeException("No User With This Id"));
         return userMapper.mapToDto(userEntity);
     }
-
+    @Scheduled(fixedRate = 5000)
+    public void sendLogs() {
+        log.info("logs sent");
+    }
 }

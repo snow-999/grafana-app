@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1")
+@CrossOrigin("http://localhost:4200/")
 public class Controller {
 
     @Autowired
@@ -24,5 +25,9 @@ public class Controller {
     ResponseEntity<UserDto> getUserId(@PathVariable long userId) {
         UserDto userDto = userService.getUser(userId);
         return new ResponseEntity<>(userDto ,HttpStatus.OK);
+    }
+    @GetMapping
+    void getLogs() {
+        userService.sendLogs();
     }
 }
