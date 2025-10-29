@@ -40,18 +40,24 @@ services:
     restart: always
 
   prometheus:
-    image: prom/prometheus:v2.35.0
+    image: prom/prometheus
     container_name: prometheus
-    restart: unless-stopped
-    volumes:
-      - ./src/prometheus/config:/etc/prometheus
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
     ports:
-      - 9090:9090
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    depends_on:
+      - app
+      - postgres-exporter
+    restart: always
 
   grafana:
-    image: grafana/grafana-oss:8.5.2
+    image: grafana/grafana:latest
     pull_policy: always
     container_name: grafana
     restart: unless-stopped
@@ -64,9 +70,11 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_SERVER_DOMAIN=localhost
-      # Enabled for logging
       - GF_LOG_MODE=console file
       - GF_LOG_FILTERS=alerting.notifier.slack:debug alertmanager:debug ngalert:debug
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
 
 volumes:
   grafana_data:
